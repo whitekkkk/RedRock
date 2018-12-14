@@ -12,7 +12,7 @@ public class login extends HttpServlet {
     private ResultSet rs;
     private PreparedStatement pstm;
     @Override
-    public void init() throws ServletException {
+    public void init() throws ServletException {//获取驱动和链接
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/redrock?serverTimezone=GMT%2B8", "root", "");
@@ -23,8 +23,8 @@ public class login extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username");//从URL中获取username
+        String password = request.getParameter("password");//从URL中获取password
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
         try {
@@ -32,7 +32,7 @@ public class login extends HttpServlet {
             pstm=con.prepareStatement(sql);
             pstm.setString(1,username);
             rs = pstm.executeQuery();
-            if (rs.next()) {
+            if (rs.next()) {//判断获得的用户名和密码是否存在于数据库中
                 response.getWriter().write("用户名正确.....正在检查密码.....\n");
                 if(password.equals(rs.getString("password")))
                 {
@@ -44,6 +44,9 @@ public class login extends HttpServlet {
             } else {
                 response.getWriter().write("用户名不存在");
             }
+            rs.close();//关闭链接
+            pstm.close();
+            con.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

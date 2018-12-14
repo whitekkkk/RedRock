@@ -12,7 +12,7 @@ public class register extends HttpServlet {
     @Override
     public void init()throws ServletException
     {
-        try {
+        try {//获取驱动和链接
             Class.forName("com.mysql.cj.jdbc.Driver");
             con= DriverManager.getConnection("jdbc:mysql://localhost/redrock","root","");
         }catch (Exception e)
@@ -22,18 +22,18 @@ public class register extends HttpServlet {
     }
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username");//从URL中获取username
+        String password = request.getParameter("password");//从URL中获取password
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("UTF-8");
-        if (username != null && password != null) {
-            try {
+        if (username != null && password != null) {//判断输入是否标准
+            try {//将数据上传到数据库
                 String sql = "insert into user(username,password) values(?,?)";
                 PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, username);
                 pstmt.setString(2, password);
                 pstmt.executeUpdate();
-                con.close();
+                con.close();//关闭链接
                 pstmt.close();
             } catch (Exception e) {
                 e.printStackTrace();
